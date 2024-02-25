@@ -55,6 +55,9 @@ interface Cache
 
 	public function flushDatabase(): void;
 
+	/**
+	 * @throws TransactionFailedException
+	 */
 	public function commit(): bool;
 
 }
