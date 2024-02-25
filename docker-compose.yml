@@ -1,0 +1,8 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis:6-alpine
+    restart: unless-stopped
+    ports:
+      - "6555:6379"

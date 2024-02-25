@@ -1,0 +1,15 @@
+{
+    "name": "webchemistry/cache",
+    "require": {
+        "php": ">= 8.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "WebChemistry\\Cache\\": "src"
+        }
+    },
+    "require-dev": {
+        "nette/tester": "^2.5",
+        "phpstan/phpstan": "^1.10"
+    }
+}
