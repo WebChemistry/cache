@@ -14,9 +14,13 @@ final class RedisCache implements Cache
 	/** @var array<callable(mixed): void> */
 	private array $set = [];
 
+	/**
+	 * @param array{mode: Redis::PIPELINE|Redis::MULTI} $options
+	 */
 	public function __construct(
 		private Redis $redis,
 		private ?string $namespace = null,
+		private array $options = [],
 	)
 	{
 	}
@@ -167,7 +171,7 @@ final class RedisCache implements Cache
 	private function callFn(callable $fn, callable $onSet): Async
 	{
 		if (!$this->inTransaction) {
-			$this->redis->multi();
+			$this->redis->multi($this->options['mode'] ?? Redis::MULTI);
 		}
 
 		$fn();
