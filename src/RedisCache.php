@@ -15,7 +15,7 @@ final class RedisCache implements Cache
 	private array $set = [];
 
 	/**
-	 * @param array{mode: Redis::PIPELINE|Redis::MULTI} $options
+	 * @param array{mode?: Redis::PIPELINE|Redis::MULTI} $options
 	 */
 	public function __construct(
 		private Redis $redis,
@@ -151,11 +151,7 @@ final class RedisCache implements Cache
 	private function processTransaction(array $results): void
 	{
 		foreach ($this->set as $i => $set) {
-			if (!array_key_exists($i, $results)) {
-				throw new LogicException('Transaction failed.');
-			}
-
-			$set($results[$i]);
+			$set($results[$i] ?? null);
 		}
 
 		$this->set = [];
@@ -203,10 +199,11 @@ final class RedisCache implements Cache
 		$results = $this->redis->exec();
 
 		if (!is_array($results)) {
-			throw new TransactionFailedException('Transaction failed.');
+			// transaction failed, skip errors
+			$this->processTransaction([]);
+		} else {
+			$this->processTransaction($results);
 		}
-
-		$this->processTransaction($results);
 
 		$this->inTransaction = false;
 	}
