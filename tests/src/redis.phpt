@@ -1,7 +1,6 @@
 <?php
 
 use Tester\Assert;
-use WebChemistry\Cache\RedisAsyncCache;
 use WebChemistry\Cache\RedisCache;
 
 require __DIR__ . '/../bootstrap.php';
