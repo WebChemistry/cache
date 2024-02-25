@@ -168,6 +168,8 @@ final class RedisCache implements Cache
 	{
 		if (!$this->inTransaction) {
 			$this->redis->multi($this->options['mode'] ?? Redis::MULTI);
+
+			$this->inTransaction = true;
 		}
 
 		$fn();
