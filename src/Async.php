@@ -3,7 +3,7 @@
 namespace WebChemistry\Cache;
 
 /**
- * @template T
+ * @template-covariant T
  */
 interface Async
 {
