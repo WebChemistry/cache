@@ -7,6 +7,8 @@ interface Cache
 
 	public function namespace(string $namespace): Cache;
 
+	public function isOk(): bool;
+
 	/**
 	 * @return Async<string[]>
 	 */
@@ -52,5 +54,7 @@ interface Cache
 	public function delMatch(string $pattern): Async;
 
 	public function flushDatabase(): void;
+
+	public function commit(): bool;
 
 }

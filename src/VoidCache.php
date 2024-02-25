@@ -14,6 +14,12 @@ final class VoidCache implements Cache
 	}
 
 	#[Override]
+	public function isOk(): bool
+	{
+		return false;
+	}
+
+	#[Override]
 	public function keys(string $pattern): Async
 	{
 		/** @var Async<string[]> */
@@ -67,6 +73,11 @@ final class VoidCache implements Cache
 	#[Override]
 	public function flushDatabase(): void
 	{
+	}
+
+	public function commit(): bool
+	{
+		return true;
 	}
 
 }

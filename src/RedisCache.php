@@ -28,6 +28,12 @@ final class RedisCache implements Cache
 	}
 
 	#[Override]
+	public function isOk(): bool
+	{
+		return true;
+	}
+
+	#[Override]
 	public function keys(string $pattern): Async
 	{
 		/** @var Async<string[]> */
@@ -125,9 +131,7 @@ final class RedisCache implements Cache
 	#[Override]
 	public function flushDatabase(): void
 	{
-		if ($this->inTransaction) {
-			$this->commit();
-		}
+		$this->commit();
 
 		$this->redis->flushDB();
 	}
@@ -168,22 +172,34 @@ final class RedisCache implements Cache
 
 		$fn();
 
-		[$value, $set] = AwaitAsync::create([$this, 'commit'], $onSet);
+		[$value, $set] = AwaitAsync::create([$this, 'internalCommit'], $onSet);
 
 		$this->set[] = $set;
 
 		return $value;
 	}
 
+	#[Override]
+	public function commit(): bool
+	{
+		if ($this->inTransaction) {
+			$this->internalCommit();
+
+			return true;
+		}
+
+		return false;
+	}
+
 	/**
 	 * @internal
 	 */
-	public function commit(): void
+	public function internalCommit(): void
 	{
 		$results = $this->redis->exec();
 
 		if (!is_array($results)) {
-			throw new LogicException('Transaction failed.');
+			throw new TransactionFailedException('Transaction failed.');
 		}
 
 		$this->processTransaction($results);
